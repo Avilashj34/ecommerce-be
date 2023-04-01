@@ -27,7 +27,27 @@ class OrderService:
         #     customer=customer.id,
         #     receipt_email=request.token.email,
         # )
-
+        content = f"""
+            <p>
+            Hi <b>{request.currentUser.name}</b>
+            We recived your order. The order value is {request.subtotal}.
+            <br/>
+            <br/>
+            <br/>
+            We will delivered it shortly.
+            <br/>
+            <br/>
+            <br/>
+            Thanks
+            - Team Ecom
+            </p>
+        """
+        emailObj = {
+            'fromemail': 'riyapathak099@gmail.com',
+            'toemail': request.currentUser.email,
+            'subject': 'TEst Emal Order',
+            'htmlContent': content
+        }
         if True:
             order_create = OrderModel(
                 user_id=request.currentUser.id,
@@ -43,6 +63,8 @@ class OrderService:
                 .filter(OrderModel.user_id == request.currentUser.id)
                 .first()
             )
+
+           
 
             # shipping_a = ShippingAddressModel(
             #     address=request.token.card.address_line1,
@@ -62,6 +84,8 @@ class OrderService:
 
             db.add(order_item_a)
             db.commit()
+        
+        send_mail(emailObj)
 
         return request
 
@@ -99,3 +123,17 @@ class OrderService:
 
         return order_by_userid
 
+
+def send_mail(emailObj):
+    import requests
+
+    res = requests.post(
+        "https://api.mailgun.net/v3/sandboxec3bffde347e4ad5bcc79cf6802255af.mailgun.org/messages",
+        auth=("api", "0a55cce452397ed9e693c1bf83566898-d51642fa-26bc3b87"),
+        data={
+                "from": emailObj['fromemail'],
+                "to": emailObj['toemail'],
+                "subject": emailObj['subject'],
+                "html": "<html>" + str(emailObj['htmlContent']) + "<html>"
+            }
+        )

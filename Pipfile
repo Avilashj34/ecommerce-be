@@ -15,6 +15,7 @@ python-multipart = "*"
 passlib = "*"
 stripe = "*"
 python-dotenv = "*"
+requests = "*"
 
 [dev-packages]
 black = "*"
