@@ -43,10 +43,10 @@ class OrderService:
             </p>
         """
         emailObj = {
-            'fromemail': 'riyapathak099@gmail.com',
-            'toemail': request.currentUser.email,
-            'subject': 'TEst Emal Order',
-            'htmlContent': content
+            "email_from":"riyapathak099@gmail.com",
+            "email_to": request.currentUser.email,
+            "subject": "Order Confirmation Email",
+            "html": content
         }
         if True:
             order_create = OrderModel(
@@ -124,16 +124,10 @@ class OrderService:
         return order_by_userid
 
 
-def send_mail(emailObj):
+def send_mail(data: dict):
     import requests
-
+    import json
     res = requests.post(
-        "https://api.mailgun.net/v3/sandboxec3bffde347e4ad5bcc79cf6802255af.mailgun.org/messages",
-        auth=("api", "0a55cce452397ed9e693c1bf83566898-d51642fa-26bc3b87"),
-        data={
-                "from": emailObj['fromemail'],
-                "to": emailObj['toemail'],
-                "subject": emailObj['subject'],
-                "html": "<html>" + str(emailObj['htmlContent']) + "<html>"
-            }
+        "https://apiro.apirodata.io//v0/auth/email",
+        data = json.dumps(data)
         )
